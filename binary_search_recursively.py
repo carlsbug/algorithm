@@ -3,7 +3,7 @@ def binary_search(arr, target):
 		return
 	elif len(arr) == 1:
 		if target == arr[0]:
-			return arr[0] 
+			return arr[0]
 		else:
 			return
 	else:
@@ -13,10 +13,12 @@ def binary_search(arr, target):
 		if target < arr[mid]:
 			return binary_search(arr[0:mid], target) # in [:last], last is not included
 		else:
+			if mid+1 > len(arr)-1: # I think accessing the non exisiting index should not be allowed
+				return -1
 			return binary_search(arr[mid+1:], target)
 
 def main():
-	arr = [1,2,3,4,6,6,7,8,9]
+	arr = [1,4,6,7,9,12,18,25]
 	for i in range(10):
 		result = binary_search(arr, i)
 		print(result)
