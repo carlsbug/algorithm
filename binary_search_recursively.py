@@ -13,7 +13,7 @@ def binary_search(arr, target):
 		if target < arr[mid]:
 			return binary_search(arr[0:mid], target) # in [:last], last is not included
 		else:
-			if mid+1 > len(arr)-1: # I think accessing the non exisiting index should not be allowed
+			if mid+1 > len(arr)-1: # accessing the non exisiting index should not be allowed
 				return -1
 			return binary_search(arr[mid+1:], target)
 
