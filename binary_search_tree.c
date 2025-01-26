@@ -7,50 +7,125 @@ struct Node{
     struct Node *right;
 };
 
-void traverse_inorder(struct Node* n){
+void traverse(struct Node* n){
     if (n == NULL){
         return;
     }
-    traverse_inorder(n->left);
+    traverse(n->left);
     printf("%d ", n->key);
-    traverse_inorder(n->right);
+    traverse(n->right);
 } 
+
+struct Node* searchNode(struct Node* n, int key){
+    if (n == NULL){
+        return NULL;
+    }
+    else if (n->key == key){
+        return n;
+    }
+    else if (n->key > key){
+        return searchNode(n->left, key);
+    }
+    else{
+        return searchNode(n->right, key);
+    }
+}
+
+struct Node* findLeastNode(struct Node* n){
+    while (n->left!=NULL){
+        n = n->left;
+    }
+    return n;
+};
 
 struct Node* insertNode(struct Node* n, int key){
     if (n == NULL){
         struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
         newNode->key = key;
+        newNode->left = NULL;
+        newNode->right = NULL;
         return newNode;
     }
     else if (key < n->key){
-        return n->left = insertNode(n->left, key);
+        n->left = insertNode(n->left, key);
+        return n;
     }
     else {
-        return n->right = insertNode(n->right, key);
+        n->right = insertNode(n->right, key);
+        return n;
     }
 }
 
-struct Node* search(struct Node* n, int key){
+struct Node* deleteNode(struct Node* n, int key){
     if (n == NULL){
         return NULL;
     }
-    else if (n->key == key){
-        printf("found node, key: %d", n->key);
-        return NULL;
+    else if(key == n->key){
+        if (n->left ==NULL && n->right==NULL){
+            free(n);
+            return NULL;
+        }
+        else if(n->left== NULL && n->right != NULL){
+            struct Node* temp = n->right;
+            free(n);
+            return temp;
+        }
+        else if(n->left != NULL && n->right ==NULL){
+            struct Node* temp = n->left;
+            free(n);
+            return temp;
+        }
+        else{ // when n has both children, left and right
+            struct Node *leastNode;
+            leastNode = n->right;
+            while(leastNode->left != NULL){
+                leastNode = leastNode->left;
+            }
+            n->key = leastNode->key;
+            n->right = deleteNode(n->right, leastNode->key);
+            return n;
+        }
     }
     else if (n->key > key){
-        return search(n->left, key);
+        n->left = deleteNode(n->left, key);
+        return n;
     }
-    else{
-        return search(n->right, key);
+    else {
+        n->right = deleteNode(n->right, key);
+        return n;
     }
 }
 
-int main(){
-    struct Node tree = {5, NULL, NULL};
-    struct Node *ptr = &tree;
+void freeTree(struct Node* n) {
+    if (n == NULL) {
+        return;
+    }
+    freeTree(n->left);
+    freeTree(n->right);
+    free(n);
+}
 
-    insertNode(ptr, 10);
-    traverse_inorder(ptr);
-    struct Node *found = search(ptr, 10);
+int main(){
+    struct Node* tree = (struct Node*)malloc(sizeof(struct Node));
+    tree->key = 55;
+    insertNode(tree, 15);
+    insertNode(tree, 8);
+    insertNode(tree, 3);
+    insertNode(tree, 28);
+    insertNode(tree, 18);
+    insertNode(tree, 45);
+    insertNode(tree, 41);
+    insertNode(tree, 30);
+    insertNode(tree, 38);
+    insertNode(tree, 33);
+    insertNode(tree, 32);
+    insertNode(tree, 36);
+    insertNode(tree, 48);
+    insertNode(tree, 50);
+    insertNode(tree, 60);
+    insertNode(tree, 90);
+    deleteNode(tree, 28);
+    traverse(tree);
+    freeTree(tree);
+    return 0;
 }
